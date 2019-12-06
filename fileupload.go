@@ -25,7 +25,7 @@ func main() {
 
 	r.Use(static.Serve("/", static.LocalFile("./", true)))
 
-	listenAddr := fmt.Sprintf("%v:%d", *addr, *port)
+	listenAddr := fmt.Sprintf("%s:%d", *addr, *port)
 	fmt.Println("listen on: " + listenAddr)
 
 	err := r.Run(listenAddr)
@@ -57,15 +57,16 @@ func rootGet(c *gin.Context) {
 func rootPost(c *gin.Context) {
 	file, err := c.FormFile("file")
 	if err != nil {
-		println(err)
+		fmt.Println(err)
 	}
-	log.Println(file.Filename)
 
 	err = c.SaveUploadedFile(file, file.Filename)
 	if err != nil {
-		println(err)
+		fmt.Println(err)
 		c.String(http.StatusOK, fmt.Sprintf("%s", err))
 	}
+	msg := fmt.Sprintf("%s uploaded %s.", c.Request.RemoteAddr, file.Filename)
+	fmt.Println(msg)
 
-	c.String(http.StatusOK, fmt.Sprintf("'%s' upoaded", file.Filename))
+	c.String(http.StatusOK, msg)
 }
